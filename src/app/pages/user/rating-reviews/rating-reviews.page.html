@@ -1,0 +1,118 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/"></ion-back-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>Рейтинг</strong>
+		</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5" pullMin="100" pullMax="200"
+				   color="primary">
+		<ion-refresher-content pullingIcon="arrow-dropdown"
+							   pullingText="Потяните, чтобы обновить" refreshingText="Обновление...">
+		</ion-refresher-content>
+	</ion-refresher>
+	<div *ngIf="isRefresh && !isErrorLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-spinner name="crescent" color="primary" style="width: 48px; height: 48px;"></ion-spinner>
+			</ion-col>
+		</ion-row>
+	</div>
+	<ion-list class="pb-0" *ngIf="!isRefresh && !isErrorLoad">
+		<ion-item lines="none" class="item-large">
+			<ion-label class="ion-text-center"><strong style="font-size: 3.5rem;">{{ rating }}</strong> <strong> / </strong> <ion-icon name="people" class="pr-1 icon-1x"></ion-icon> <strong>{{ countFeedbacks }}</strong></ion-label>
+		</ion-item>
+		<ion-item lines="full" class="item-large">
+			<ion-label class="ion-text-center">
+				<span>
+					<ion-icon *ngFor="let rating_star of ratingStars;" name="{{ rating_star }}"
+							  class="icon-2x"></ion-icon>
+				</span>
+			</ion-label>
+		</ion-item>
+		<ion-item lines="full" class="item-rating">
+			<ion-icon slot="start" name="add" color="primary" class="icon-2x"></ion-icon>
+			<ion-label position="floating" color="medium">Создано заявок</ion-label>
+			<ion-input type="text" [ngModel]="countCreateRequests" readonly></ion-input>
+		</ion-item>
+		<ion-item lines="full" class="item-rating">
+			<ion-icon slot="start" name="checkbox-outline" color="success" class="icon-2x"></ion-icon>
+			<ion-label position="floating" color="medium">Выполнено заявок</ion-label>
+			<ion-input type="text" [ngModel]="countCompletRequests" readonly></ion-input>
+		</ion-item>
+		<ion-item lines="full" class="item-rating">
+			<ion-icon slot="start" name="close-circle-outline" color="danger" class="icon-2x"></ion-icon>
+			<ion-label position="floating" color="medium">Отменено заявок</ion-label>
+			<ion-input type="text" [ngModel]="countNotCompletRequests" readonly></ion-input>
+		</ion-item>
+	</ion-list>
+	<div class="top-content-bg" *ngIf="!isRefresh && !isErrorLoad && feedbacks && feedbacks.length > 0"></div>
+	<div *ngIf="isErrorLoad && !isLoad">
+		<ion-row class="ion-justify-content-center mt-5">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="wifi" color="medium" class="icon-8x"></ion-icon>
+				<div>
+					<h4 class="mt-0 mb-0">Интернет недоступен</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Для работы приложения необходим доступ к сети</p>
+				</div>
+				<ion-button (click)="updateLoad()" expand="block" size="large" class="mt-3 shadow-md">Обновить
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="!isErrorLoad && feedbacks && feedbacks.length == 0 && !isLoad">
+		<ion-row class="ion-justify-content-center mt-5">
+			<ion-col size="12" class="ion-text-center">
+				<ion-icon name="text" color="medium" class="icon-8x"></ion-icon>
+				<div class="ion-text-center ion-padding-horizontal">
+					<h4 class="mt-0 mb-0">Еще нет оценок и отзывов</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Это нужно еще заработать!!!</p>
+				</div>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="!isRefresh && !isErrorLoad">
+		<ion-card class="request-card mb-3" color="white" mode="ios" *ngFor='let feedback of feedbacks'>
+			<ion-item lines="full" [routerLink]="['/user/profile/' + feedback.user?.id]" detail>
+				<ion-avatar slot="start" style="border: 2px solid #10dc60;">
+					<img [src]="feedback.user?.avatar_image">
+				</ion-avatar>
+				<ion-label>
+					<h3>{{ feedback.user?.first_last_middle_name }}</h3>
+					<p>здесь с {{ feedback.user?.created_at }}</p>
+				</ion-label>
+			</ion-item>
+			<ion-card-content class="pt-3 pb-0">
+				<p class="ion-text-wrap">{{ feedback.message }}</p>
+			</ion-card-content>
+			<ion-item lines="full">
+				<span>
+					<ion-icon *ngFor="let rating_star of feedback.rating_stars;" name="{{ rating_star }}" class="icon-1x"></ion-icon>
+				</span>
+				<strong class="pl-2 icon-1x">{{ feedback.rating }}</strong>
+			</ion-item>
+			<ion-item lines="full" (click)="openRequest('/requests/detail/'+feedback.request_r_id)" detail>
+				<ion-label>
+					<h3>Заявка №{{ feedback.request_r_id }}</h3>
+				</ion-label>
+			</ion-item>
+			<ion-item lines="none">
+				<ion-icon name="calendar" slot="start"></ion-icon>
+				<ion-label color="medium">{{ feedback.created_at }}</ion-label>
+			</ion-item>
+		</ion-card>
+		<ion-infinite-scroll threshold="200px" (ionInfinite)="infiniteLoadFeedbacks($event)" class="pt-3">
+			<ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Загрузка...">
+			</ion-infinite-scroll-content>
+		</ion-infinite-scroll>
+	</div>
+</ion-content>

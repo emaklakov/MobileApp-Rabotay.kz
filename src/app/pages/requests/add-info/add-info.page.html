@@ -1,0 +1,108 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/requests/add" routerDirection="root"></ion-back-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>{{ infoTitle }}</strong>
+		</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+	<div *ngIf="isLoad && !isErrorLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-spinner name="crescent" color="primary" style="width: 48px; height: 48px;"></ion-spinner>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="isErrorLoad && !isLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="wifi" color="medium" class="icon-8x"></ion-icon>
+				<div>
+					<h4 class="mt-0 mb-0">Интернет недоступен</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Для работы приложения необходим доступ к сети</p>
+				</div>
+				<ion-button (click)="updateLoad()" expand="block" size="large" class="mt-3 shadow-md">Обновить
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="!isLoad && !isErrorLoad">
+		<ion-list lines="full" class="pb-0">
+			<ion-list-header>
+				<ion-label>Где Вам помочь?</ion-label>
+			</ion-list-header>
+			<ion-item [routerLink]="['/locations']" routerDirection="forward" class="item-large">
+				<ion-label position="floating" color="medium">Населенный пункт</ion-label>
+				<ion-input type="text" [ngModel]="location?.name" readonly></ion-input>
+			</ion-item>
+			<ion-item class="item-large">
+				<ion-label position="floating" color="medium">Адрес</ion-label>
+				<ion-input type="text" (ionInput)="ionInputAddress($event)" inputmode="text"></ion-input>
+			</ion-item>
+		</ion-list>
+		<ion-list lines="full" class="mt-3 pb-0">
+			<ion-list-header>
+				<ion-label>Чем Вам помочь?</ion-label>
+			</ion-list-header>
+			<ion-item class="item-large">
+				<ion-label position="floating" color="medium">Заголовок</ion-label>
+				<ion-input type="text" (ionInput)="ionInputTitle($event)" inputmode="text"></ion-input>
+			</ion-item>
+			<ion-item class="item-large">
+				<ion-label position="floating" color="medium">Описание</ion-label>
+				<ion-textarea rows="3" (ionInput)="ionInputDescription($event)">
+				</ion-textarea>
+			</ion-item>
+		</ion-list>
+		<ion-list lines="full" class="mt-3 pb-0">
+			<ion-list-header>
+				<ion-label>Когда Вам помочь?</ion-label>
+			</ion-list-header>
+			<ion-item class="item-large">
+				<ion-label position="floating" color="medium">Дата начала</ion-label>
+				<ion-datetime
+						monthNames="[Январь, Февраль, Март, Апрель, Май, Июнь, Июль, Август, Сентябрь, Октябрь, Ноябрь, Декабрь]"
+						monthValues="01,02,03,04,05,06,07,08,09,10,11,12" minuteValues="00,15,30,45"
+						displayFormat="DD.MM.YYYY HH:mm" pickerFormat="DD MMMM YYYY HH mm" value="{{ requestStartDate }}"
+						doneText="Сохранить" cancelText="Отмена" mode="md" (ionChange)="changeRequestStartDate($event)"
+						min="{{ minDate }}" max="{{ maxDate }}">
+				</ion-datetime>
+			</ion-item>
+			<ion-item class="item-large">
+				<ion-label position="floating" color="medium">Дата окончания</ion-label>
+				<ion-datetime
+						monthNames="[Январь, Февраль, Март, Апрель, Май, Июнь, Июль, Август, Сентябрь, Октябрь, Ноябрь, Декабрь]"
+						monthValues="01,02,03,04,05,06,07,08,09,10,11,12" minuteValues="00,15,30,45"
+						displayFormat="DD.MM.YYYY HH:mm" pickerFormat="DD MMMM YYYY HH mm" value="{{ requestEndDate }}"
+						doneText="Сохранить" cancelText="Отмена" mode="md" (ionChange)="changeRequestEndDate($event)"
+						min="{{ minDate }}" max="{{ maxDate }}">
+				</ion-datetime>
+			</ion-item>
+		</ion-list>
+		<ion-list lines="full" class="mt-3 pb-0 mb-3">
+			<ion-list-header>
+				<ion-label>Сколько готовы потратить?</ion-label>
+			</ion-list-header>
+			<ion-item class="item-large">
+				<ion-label position="floating" color="medium">Бюджет (тг)</ion-label>
+				<ion-input type="number" (ionInput)="ionInputPrice($event)" inputmode="number"></ion-input>
+			</ion-item>
+		</ion-list>
+	</div>
+</ion-content>
+
+<ion-footer *ngIf="!isLoad && !isErrorLoad">
+	<ion-toolbar>
+		<section>
+			<ion-button class="ion-margin-vertical shadow-md m-0" (click)="createRequest();" expand="full" size="large" color="success">
+				Создать заявку
+			</ion-button>
+		</section>
+	</ion-toolbar>
+</ion-footer>

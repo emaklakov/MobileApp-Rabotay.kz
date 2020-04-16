@@ -1,0 +1,66 @@
+<ion-app>
+	<ion-split-pane contentId="main-content">
+		<ion-menu side="start" contentId="main-content" type="overlay">
+			<ion-header>
+				<ion-toolbar color="success">
+					<ion-menu-toggle>
+						<ion-item color="success" lines="full" [routerDirection]="'root'"
+							[routerLink]="['/user/settings']" detail>
+							<ion-avatar class="mt-3 mb-3"
+										style="width: 60px; height: 60px; border: 5px solid #ffffff;" slot="start">
+								<img [src]="avatarImage" style="min-width: 1px; min-height: 1px;">
+							</ion-avatar>
+							<ion-label>
+								<ng-template [ngIf]="appUserIsAuthenticated">
+									<strong>{{ appUserData && appUserData?.first_name ? appUserData?.first_name : appUserData?.phone }}</strong><br><small>Настройки</small>
+								</ng-template>
+								<ng-template [ngIf]="!appUserIsAuthenticated">
+									<strong>Вход / Регистрация</strong>
+								</ng-template>
+							</ion-label>
+						</ion-item>
+						<ng-template [ngIf]="appUserIsAuthenticated">
+							<ion-item color="success" lines="full" [routerDirection]="'root'"
+								[routerLink]="['/user/balance/detail']" detail>
+								<ion-icon slot="start" name="card"></ion-icon>
+								<ion-label><strong
+										[ngStyle]="{ 'color': (appUserData?.secret?.balance >= 0 ? '#ffffff' : '#f04141') }">{{ appUserData ? appUserData?.secret?.balance : '0' }}
+										тг.</strong><br><small>Ваш
+										баланс</small></ion-label>
+							</ion-item>
+						</ng-template>
+						<ion-item color="success" lines="full" [routerLink]="['/locations']" detail>
+							<ion-icon slot="start" name="pin"></ion-icon>
+							<ng-template [ngIf]="appLocationSelect">
+								<ion-label><strong>{{ appLocationSelect?.name }}</strong><br><small>Населенный
+										пункт</small></ion-label>
+							</ng-template>
+							<ng-template [ngIf]="!appLocationSelect">
+								<ion-label><strong>Населенный пункт</strong></ion-label>
+							</ng-template>
+						</ion-item>
+					</ion-menu-toggle>
+				</ion-toolbar>
+			</ion-header>
+			<ion-content>
+				<ion-list>
+					<ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
+						<ion-item [routerDirection]="'root'" [routerLink]="[p.url]" [ngClass]="p.class">
+							<ion-icon slot="start" [name]="p.icon" color="primary"></ion-icon>
+							<ion-label>
+								{{p.title}}
+							</ion-label>
+							<div *ngIf="p.icon == 'notifications'">
+								<ion-icon *ngIf="notificationsNew" slot="end" name="bulb" color="danger" class="icon-1x"></ion-icon>
+							</div>
+						</ion-item>
+					</ion-menu-toggle>
+				</ion-list>
+			</ion-content>
+			<ion-label color="medium" class="pt-1 pb-1">
+				<p class="ion-text-center">Версия: {{ appV }}</p>
+			</ion-label>
+		</ion-menu>
+		<ion-router-outlet id="main-content" main></ion-router-outlet>
+	</ion-split-pane>
+</ion-app>

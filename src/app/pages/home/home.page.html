@@ -1,0 +1,77 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-menu-button></ion-menu-button>
+		</ion-buttons>
+		<ion-title>
+			<img width="140px" height="37px" style="height: 37px; width: 140px;" src="/assets/img/logo.png"
+					 alt="Rabotay" class="image-center">
+		</ion-title>
+		<ion-buttons slot="end" class="pr-2" [routerDirection]="'root'" [routerLink]="['/notifications/all']">
+			<ion-icon slot="icon-only" name="{{ notificationsIconName }}" color="white" id="notificationsIcon"></ion-icon>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+	<div class="top-content-bg"></div>
+	<ion-card class="welcome-card" color="white" mode="ios">
+		<img [src]="cardImg" />
+		<ion-card-header>
+			<ion-card-title>Добро пожаловать!</ion-card-title>
+		</ion-card-header>
+		<ion-card-content>
+			<p>Решайте свои дела или зарабатывайте помогая другим.</p>
+		</ion-card-content>
+		<ng-template [ngIf]="viewLoginItem && !authS.isAuthenticated()">
+			<ion-item [routerLink]="['/user/login']" lines="none" color="primary">
+				<ion-label class="ion-text-center">
+					Вход / Регистрация
+				</ion-label>
+			</ion-item>
+		</ng-template>
+	</ion-card>
+	<ng-template [ngIf]="pageSections && pageSections.length > 0">
+		<div *ngFor="let pageSection of pageSections" id='{{ pageSection.htmlContentId }}'></div>
+	</ng-template>
+	<ion-list lines="full" class="mb-3 pb-0">
+		<ion-list-header>
+			<ion-label *ngIf="!isLoad">{{ categoriesTitle }}</ion-label>
+			<ion-label *ngIf="isLoad">
+				<ion-skeleton-text animated style="width: 150px"></ion-skeleton-text>
+			</ion-label>
+		</ion-list-header>
+		<div *ngIf="isLoad">
+			<ion-item *ngFor='let category of [1,2,3,4,5]' detail>
+				<ion-avatar slot="start">
+					<ion-skeleton-text animated></ion-skeleton-text>
+				</ion-avatar>
+				<ion-label>
+					<ion-skeleton-text animated style="width: 170px"></ion-skeleton-text>
+				</ion-label>
+			</ion-item>
+		</div>
+		<div *ngIf="!isLoad">
+			<ion-item *ngFor='let category of categories' (click)="openCategory(category.id)"
+					  detail>
+				<ion-avatar slot="start">
+					<img [src]="category.icon" style="min-width: 10px; min-height: 10px;">
+				</ion-avatar>
+				<ion-label class="ion-text-wrap">
+					<h3>
+						{{ category.name }}
+						<small *ngIf="category.description && category.description != ''" class="text-medium block">{{ category.description }}</small>
+					</h3>
+				</ion-label>
+			</ion-item>
+		</div>
+		<ion-item (click)="openCategory(1)" detail>
+			<ion-label color="primary"><strong>Все категории</strong></ion-label>
+		</ion-item>
+	</ion-list>
+	<ion-fab vertical="bottom" horizontal="end" slot="fixed" class="mb-3 mr-3">
+		<ion-fab-button color="success" [routerLink]="['/requests/add']">
+			<ion-icon name="add"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
+</ion-content>

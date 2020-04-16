@@ -1,0 +1,96 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-menu-button></ion-menu-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>Вход</strong>
+		</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+	<ion-row>
+		<ion-col size="12" class="ion-text-center mt-4">
+			<ion-icon name="log-in" color="medium" class="icon-8x"></ion-icon>
+		</ion-col>
+	</ion-row>
+	<div *ngIf="isLoading">
+		<section class="pr-3 pl-3 ion-text-center">
+			<header>
+				<h2>Пожалуйста, подождите...</h2>
+			</header>
+			<ion-spinner name="crescent" color="primary" style="width: 48px; height: 48px;"></ion-spinner>
+		</section>
+	</div>
+	<div *ngIf="!isSendSMS && !isLoading">
+		<section class="pr-3 pl-3">
+			<header>
+				<h2>Введите свой номер</h2>
+			</header>
+		</section>
+		<ion-list lines="full" class="ion-no-margin ion-no-padding ion-margin-top">
+			<form [formGroup]="phoneNumberForm">
+				<ion-item class="item-large">
+					<ion-icon slot="start" name="phone-portrait"></ion-icon>
+					<ion-label>+7</ion-label>
+					<ion-input formControlName="phoneNumber" placeholder="7020000000" min="10" max="10" maxlength="10"
+						type="tel" inputmode="tel" size="large" [(ngModel)]="phoneNumber" (keypress)="eventHandlerPhoneNumber($event)">
+					</ion-input>
+				</ion-item>
+			</form>
+		</ion-list>
+		<section class="pt-1 pr-3 pl-3 mb-3">
+			<ion-text color="medium">На номер будет отправлено SMS-сообщение с кодом подтверждения. Убедитесь, что номер
+				введен верно.</ion-text>
+		</section>
+	</div>
+	<div *ngIf="isSendSMS && !isLoading">
+		<section class="pr-3 pl-3">
+			<header>
+				<h2>Введите код из SMS</h2>
+			</header>
+		</section>
+		<ion-list lines="full" class="ion-no-margin ion-no-padding ion-margin-top">
+			<form [formGroup]="codeSMSForm">
+				<ion-item class="item-large">
+					<ion-icon slot="start" name="text"></ion-icon>
+					<ion-input formControlName="codeSMS" placeholder="- - - - - -" min="6" max="6" maxlength="6"
+						type="tel" size="large" inputmode="tel" [(ngModel)]="code" (keypress)="eventHandlerSMS($event)">
+					</ion-input>
+				</ion-item>
+			</form>
+		</ion-list>
+		<section class="pt-1 pr-3 pl-3" *ngIf="timerSendSMS > 0 && code.length == 0">
+			<ion-text color="medium">Повторная отправка кода по SMS возможна через {{ timerSendSMS }} сек</ion-text>
+		</section>
+		<section class="pt-1 pr-3 pl-3" *ngIf="timerSendSMS <= 0 && code.length == 0">
+			<a (click)="sendSMS();" class="underline">Еще раз отправить код</a>
+		</section>
+		<section class="pt-4 pr-3 pl-3 mb-3 ion-text-center">
+			<a (click)="wrongNumber();" class="underline">Указал(а) не тот номер</a>
+		</section>
+	</div>
+</ion-content>
+
+<ion-footer *ngIf="!isLoading">
+	<ion-toolbar>
+		<ng-template [ngIf]="!isSendSMS && !isLoading">
+			<section class="mt-1 mb-1 pr-3 pl-3">
+				<ion-text style="font-size: 12px;" color="medium">Нажимая "ПОЛУЧИТЬ SMS С КОДОМ", я принимаю условия <a (click)="openUrl('https://rabotay.kz/info/terms-of-use')">Пользовательского соглашения</a> и даю согласие на обработку моих персональных данных в соответствии с <a (click)="openUrl('https://rabotay.kz/info/privacy-policy')">Политикой конфиденциальности</a>.</ion-text>
+			</section>
+			<section>
+				<ion-button class="ion-margin-vertical ion-text-wrap shadow-md m-0" (click)="sendSMS();" expand="full" size="large" color="success">
+					Получить SMS с кодом
+				</ion-button>
+			</section>
+		</ng-template>
+		<ng-template [ngIf]="isSendSMS && !isLoading">
+			<section>
+				<ion-button class="ion-margin-vertical shadow-md m-0" (click)="verifySMS();" expand="full" size="large" color="success">
+					Войти
+				</ion-button>
+			</section>
+		</ng-template>
+	</ion-toolbar>
+</ion-footer>

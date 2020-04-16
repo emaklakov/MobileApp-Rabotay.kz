@@ -1,0 +1,97 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/requests/all"></ion-back-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>Профиль</strong>
+		</ion-title>
+		<ion-buttons slot="end">
+			<ion-button (click)="toggleFavorite()">
+				<ion-icon *ngIf="!isFavorite" slot="icon-only" name="star-outline"></ion-icon>
+				<ion-icon *ngIf="isFavorite" slot="icon-only" name="star"></ion-icon>
+			</ion-button>
+			<ion-button (click)="profileShare();">
+				<ion-icon slot="icon-only" name="share"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+	<div *ngIf="isLoad && !isErrorLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-spinner name="crescent" color="primary" style="width: 48px; height: 48px;"></ion-spinner>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div class="top-content-bg" *ngIf="!isLoad && !isErrorLoad"></div>
+	<div *ngIf="isErrorLoad && !isLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="wifi" color="medium" class="icon-8x"></ion-icon>
+				<div>
+					<h4 class="mt-0 mb-0">Интернет недоступен</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Для работы приложения необходим доступ к сети</p>
+				</div>
+				<ion-button (click)="updateLoad()" expand="block" size="large" class="mt-3 shadow-md">Обновить
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="!isLoad && !isErrorLoad">
+		<ion-card color="white" mode="ios" class="mb-3">
+			<ion-grid>
+				<ion-row>
+					<ion-col size="3" class="ion-text-center mt-3" style="line-height: 0.9em;">
+						<h3 class="mb-0">{{ profile?.rating?.count_create_requests }}</h3>
+						<small>заявок<br>создано</small>
+					</ion-col>
+					<ion-col size="6">
+						<ion-avatar class="image-center mt-1"
+									style="width: 120px; height: 120px; border: 5px solid #10dc60;" (click)="presentAvatar()">
+							<img [src]="profile.avatar_image">
+							<ion-icon *ngIf="profile.is_verification" name="checkmark-circle" color="primary"></ion-icon>
+						</ion-avatar>
+					</ion-col>
+					<ion-col size="3" class="ion-text-center mt-3" style="line-height: 0.9em;">
+						<h3 class="mb-0">{{ profile?.rating?.count_complet_requests }}</h3>
+						<small>заявок<br>выполнено</small>
+					</ion-col>
+				</ion-row>
+			</ion-grid>
+			<ion-card-header class="pt-0">
+				<ion-card-subtitle class="ion-text-center">здесь с {{ profile.created_at }} г</ion-card-subtitle>
+				<ion-card-title class="ion-text-center">{{ profile.first_last_middle_name }}</ion-card-title>
+			</ion-card-header>
+			<ion-card-content>
+				<p>{{ profile.about_me }}</p>
+			</ion-card-content>
+			<ion-card-header class="pt-0 pb-0">
+				<ion-card-subtitle style="color: #989aa2;">Рейтинг</ion-card-subtitle>
+			</ion-card-header>
+			<ion-item lines="full" [routerLink]="['/user/rating-reviews/' + profile.id]" detail>
+				<span>
+					<ion-icon *ngFor="let rating_star of profile?.rating?.rating_stars;" name="{{ rating_star }}" class="icon-1x"></ion-icon>
+				</span>
+				<strong class="pl-2 icon-1x">{{ profile?.rating?.rating }}</strong>
+				<span class="pr-2 pl-2">|</span>
+				<span>
+					<ion-icon name="people" class="pr-2 icon-1x"></ion-icon> <strong class="icon-1x">{{ profile?.rating?.count_feedbacks }}</strong>
+				</span>
+			</ion-item>
+		</ion-card>
+		<ng-template [ngIf]="pageSections && pageSections.length > 0">
+			<div *ngFor="let pageSection of pageSections" id='{{ pageSection.htmlContentId }}'></div>
+		</ng-template>
+		<section class="mt-3 pb-3">
+			<ion-button class="ion-margin-vertical ion-text-wrap shadow-md m-0" (click)="openUrl('https://rabotay.kz/report/user/' + profile.id)" expand="full"
+						color="danger">
+				Пожаловаться на пользователя
+			</ion-button>
+		</section>
+	</div>
+</ion-content>

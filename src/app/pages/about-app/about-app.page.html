@@ -1,0 +1,64 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/"></ion-back-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>О приложении</strong>
+		</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+	<ion-row style="background: #10dc60;">
+		<ion-col>
+			<img class="image-center mt-3" height="37px" style="height: 37px;" src="/assets/img/logo.png">
+		</ion-col>
+	</ion-row>
+	<ion-row class="ion-align-items-center pb-3" style="background: #10dc60;">
+		<ion-col>
+			<div class="ion-text-center">
+				<h3 class="mt-0 mb-0">в своё удовольствие!</h3>
+				<small>Версия: {{ appVersion }}</small>
+			</div>
+		</ion-col>
+	</ion-row>
+	<ion-list lines="full" class="pb-0">
+		<ion-item>
+			<ion-text color="dark">
+				<p>Удобный сервис, который позволяет быстро и легко находить надежных исполнителей для решения бытовых и бизнес-задач.</p>
+				<p class="pb-0">Достаточно разместить заявку на сервисе, и через несколько минут вы начнете получать предложения от исполнителей, которые будут готовы ее выполнить.</p>
+			</ion-text>
+		</ion-item>
+	</ion-list>
+	<ion-list class="mt-3 pb-0">
+		<ion-list-header>
+			<ion-label>Полезная информация</ion-label>
+		</ion-list-header>
+		<ion-item (click)="openUrl('https://rabotay.kz/info/terms-of-use')" lines="full">
+			<ion-icon slot="start" name="today" color="primary"></ion-icon>
+			<ion-label>Пользовательское соглашение</ion-label>
+		</ion-item>
+		<ion-item (click)="openUrl('https://rabotay.kz/info/privacy-policy')" lines="full">
+			<ion-icon slot="start" name="today" color="primary"></ion-icon>
+			<ion-label>Политика конфиденциальности</ion-label>
+		</ion-item>
+	</ion-list>
+	<ng-template [ngIf]="pageSections && pageSections.length > 0">
+		<div *ngFor="let pageSection of pageSections" id='{{ pageSection.htmlContentId }}'></div>
+	</ng-template>
+	<ion-list class="mt-3 mb-3 pb-0">
+		<ion-item href="https://rabotay.kz/app/rate-app">
+			<ion-icon slot="start" name="star-half" color="primary"></ion-icon>
+			<ion-label>Оценить приложение</ion-label>
+		</ion-item>
+		<ion-item (click)="appShare()">
+			<ion-icon slot="start" name="share" color="primary"></ion-icon>
+			<ion-label>Поделиться приложением</ion-label>
+		</ion-item>
+		<ion-item (click)="openUrl('https://rabotay.kz/app/bug-app')" lines="full">
+			<ion-icon slot="start" name="warning" color="danger"></ion-icon>
+			<ion-label>Жалобы и предложения</ion-label>
+		</ion-item>
+	</ion-list>
+</ion-content>

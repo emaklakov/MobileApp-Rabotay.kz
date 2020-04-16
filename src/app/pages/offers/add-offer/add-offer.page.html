@@ -1,0 +1,77 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/requests/detail/{{ requestId }}"></ion-back-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>Предложение услуги</strong>
+		</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light" class="add-offer">
+	<div *ngIf="isLoad && !isErrorLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-spinner name="crescent" color="primary" style="width: 48px; height: 48px;"></ion-spinner>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="isErrorLoad && !isLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="wifi" color="medium" class="icon-8x"></ion-icon>
+				<div>
+					<h4 class="mt-0 mb-0">Интернет недоступен</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Для работы приложения необходим доступ к сети</p>
+				</div>
+				<ion-button (click)="updateLoad()" expand="block" size="large" class="mt-3 shadow-md">Обновить
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="!isLoad && !isErrorLoad">
+		<ion-list lines="full" class="pt-0 pb-0">
+			<ion-item class="item-large">
+				<ion-label position="floating" color="medium">Сообщение заказчику</ion-label>
+				<ion-textarea rows="3" (ionInput)="ionInputDescription($event)">
+				</ion-textarea>
+			</ion-item>
+		</ion-list>
+		<ion-list lines="full" class="mt-3 pb-0 pt-0">
+			<ng-template #price>
+				<ion-item lines="full">
+					<ion-label color="medium" class="ion-text-wrap">
+						<small>Оплата Вашей работы</small>
+						<p class="mt-2">Заказчик указал бюджет {{ requestR.price }}</p>
+					</ion-label>
+				</ion-item>
+			</ng-template>
+			<ng-template [ngIf]="!requestR.price || requestR.price == 'Не указан'" [ngIfElse]="price">
+				<ion-item lines="full">
+					<ion-label color="medium" class="ion-text-wrap">
+						<small>Оплата Вашей работы</small>
+						<p class="mt-2">Заказчик не указал бюджет. Вам нужно предложить свою стоимость.</p>
+					</ion-label>
+				</ion-item>
+			</ng-template>
+			<ion-item class="item-large">
+				<ion-label position="floating" color="medium">Предложить стоимость (тг)</ion-label>
+				<ion-input type="number" (ionInput)="ionInputPrice($event)" inputmode="number"></ion-input>
+			</ion-item>
+		</ion-list>
+	</div>
+</ion-content>
+
+<ion-footer *ngIf="!isLoad && !isErrorLoad">
+	<ion-toolbar>
+		<section>
+			<p class="ion-text-center mt-1 mb-1 pr-3 pl-3"><small>Все поля не обязательны. Вы можете принять то, что предложил заказчик.</small></p>
+			<ion-button class="ion-margin-vertical shadow-md m-0" (click)="createOffer();" expand="full" size="large" color="success">
+				Предложить
+			</ion-button>
+		</section>
+	</ion-toolbar>
+</ion-footer>

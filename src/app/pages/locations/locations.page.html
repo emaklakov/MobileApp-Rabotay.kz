@@ -1,0 +1,58 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/"></ion-back-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>Населенные пункты</strong>
+		</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+	<ion-list lines="full" *ngIf="isLoad">
+		<ion-item-group>
+			<ion-item-divider>
+				<ion-label>
+					<ion-skeleton-text animated style="width: 150px"></ion-skeleton-text>
+				</ion-label>
+			</ion-item-divider>
+
+			<ion-item *ngFor='let location of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]'>
+				<ion-label><ion-skeleton-text animated style="width: 170px"></ion-skeleton-text></ion-label>
+				<ion-ripple-effect></ion-ripple-effect>
+			</ion-item>
+		</ion-item-group>
+	</ion-list>
+	<div *ngIf="isErrorLoad && !isLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="wifi" color="medium" class="icon-8x"></ion-icon>
+				<div>
+					<h4 class="mt-0 mb-0">Интернет недоступен</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Для работы приложения необходим доступ к сети</p>
+				</div>
+				<ion-button (click)="updateLoad()" expand="block" size="large" class="mt-3 shadow-md">Обновить
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<ion-list id="listLocation" lines="full">
+		<ion-item-group *ngFor='let region of regions'>
+			<ion-item-divider>
+				<ion-label>
+					{{ region.name }}
+				</ion-label>
+			</ion-item-divider>
+
+			<ion-item *ngFor='let location of region.locations' (click)="selectLocation(location.id, location.name)">
+				<ion-label class="ion-text-wrap">{{ location.name }}</ion-label>
+				<ion-icon name="checkmark" slot="end" color="primary" style="visibility:hidden"
+					id="select-location-icon-{{ location.id }}"></ion-icon>
+				<ion-ripple-effect></ion-ripple-effect>
+			</ion-item>
+		</ion-item-group>
+	</ion-list>
+</ion-content>

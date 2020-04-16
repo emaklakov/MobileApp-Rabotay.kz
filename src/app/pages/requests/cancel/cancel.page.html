@@ -1,0 +1,39 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="/requests/detail/{{ requestId }}"></ion-back-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>Отмена заявки</strong>
+		</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+	<div *ngIf="isLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-spinner name="crescent" color="primary" style="width: 48px; height: 48px;"></ion-spinner>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="!isLoad">
+		<ion-list class="pt-0 pb-0 mb-3">
+			<ion-item lines="full" class="item-large">
+				<ion-label position="floating" color="medium">Укажите причину отмены заявки</ion-label>
+				<ion-textarea rows="3" (ionInput)="ionInputCanceledDescription($event)">
+				</ion-textarea>
+			</ion-item>
+		</ion-list>
+	</div>
+</ion-content>
+
+<ion-footer *ngIf="!isLoad">
+	<ion-toolbar>
+		<section>
+			<ion-button class="ion-margin-vertical shadow-md m-0" (click)="cancelRequest();" expand="full" size="large" color="danger">
+				Отменить
+			</ion-button>
+		</section>
+	</ion-toolbar>
+</ion-footer>

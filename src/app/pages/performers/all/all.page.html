@@ -1,0 +1,169 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-menu-button></ion-menu-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>Исполнители</strong>
+		</ion-title>
+		<ion-buttons slot="end">
+			<ion-button (click)="filteShow();" color="white">
+				<ion-icon name="options" class="mr-2 text-white"></ion-icon>
+				Фильтр
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
+	<ion-list lines="none" class="pt-0 pb-0">
+		<ion-segment (ionChange)="changeSegmentTypePerformer($event)">
+			<ion-segment-button value="all" checked>
+				<ion-label>Все</ion-label>
+			</ion-segment-button>
+			<ion-segment-button value="favorites">
+				<ion-label>Избранные</ion-label>
+			</ion-segment-button>
+		</ion-segment>
+	</ion-list>
+	<div *ngIf="!isErrorLoad && isFilteShow">
+		<ion-list lines="none">
+			<ion-list-header>
+				<ion-label>Фильтр</ion-label>
+				<ion-button size="small" fill="outline" color="primary" class="button-filter-hide mr-3"
+							(click)="filteShow();">
+					<ion-label>закрыть</ion-label>
+				</ion-button>
+			</ion-list-header>
+			<ion-item [routerLink]="['/locations']" routerDirection="forward" class="item-large">
+				<ion-label position="floating" color="medium">Населенный пункт</ion-label>
+				<ion-input type="text" [ngModel]="location.name" readonly></ion-input>
+			</ion-item>
+			<ion-item class="item-large">
+				<ion-label position="floating" color="medium">Категория</ion-label>
+				<ion-select value="{{ selectCategoryId }}" interface="action-sheet" okText="Ок" cancelText="Отмена"
+							(ionChange)="selectCategory($event)" selectedText="{{ selectCategoryText }}">
+					<ion-select-option value="1">Все категории</ion-select-option>
+					<ion-select-option *ngFor='let category of categories' value="{{ category.id }}">{{ category.name }}
+					</ion-select-option>
+				</ion-select>
+			</ion-item>
+		</ion-list>
+	</div>
+</ion-header>
+
+<ion-content color="light">
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5" pullMin="100" pullMax="200" color="primary">
+		<ion-refresher-content pullingIcon="arrow-dropdown"
+							   pullingText="Потяните, чтобы обновить" refreshingText="Обновление...">
+		</ion-refresher-content>
+	</ion-refresher>
+	<div *ngIf="isRefresh && !isErrorLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-spinner name="crescent" color="primary" style="width: 48px; height: 48px;"></ion-spinner>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div class="top-content-bg" *ngIf="!isLoad && !isErrorLoad && performers && performers.length > 0">
+		<p class="ion-color-white ion-text-center mt-2 pt-0 pl-3 pr-3" (click)="filteShow();">{{ selectCategoryText }}</p>
+	</div>
+	<div *ngIf="isErrorLoad && !isLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="wifi" color="medium" class="icon-8x"></ion-icon>
+				<div>
+					<h4 class="mt-0 mb-0">Интернет недоступен</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Для работы приложения необходим доступ к сети</p>
+				</div>
+				<ion-button (click)="updateLoad()" expand="block" size="large" class="mt-3 shadow-md">Обновить
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="!location && !isErrorLoad && (selectCategoryId != 1 || selectCategoryId == 1)" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="pin" color="medium" class="icon-8x"></ion-icon>
+				<div class="ion-text-center ion-padding-horizontal">
+					<h4 class="mt-0 mb-0">Выберите населенный пункт</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Смотреть исполнителей можно относительно населенного пункта</p>
+				</div>
+				<ion-button [routerLink]="['/locations']" expand="block" size="large" class="mt-3 shadow-md">Выбрать
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="location && selectCategoryId == 1 && !isErrorLoad" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="pricetags" color="medium" class="icon-8x"></ion-icon>
+				<div class="ion-text-center ion-padding-horizontal">
+					<h4 class="mt-0 mb-0">Выберите категорию</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Смотреть исполнителей можно только по категориям</p>
+				</div>
+				<ion-button (click)="filteShow();" expand="block" size="large" class="ion-text-wrap mt-3 shadow-md">
+					Выбрать
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="location && !isErrorLoad && performers && performers.length == 0 && !isLoad && selectCategoryId != 1" class="h-100">
+		<ion-row class="ion-justify-content-center ion-align-items-center h-100">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="search" color="medium" class="icon-8x"></ion-icon>
+				<div class="ion-text-center ion-padding-horizontal">
+					<h4 class="mt-0 mb-0">Ничего не найдено</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Убедитесь, что у вас выбрана нужная Вам категория и верный населенный пункт</p>
+				</div>
+				<ion-button (click)="filteShow();" expand="block" size="large" class="ion-text-wrap mt-3 shadow-md">
+					{{ selectCategoryText ? selectCategoryText : 'Все категории' }}
+				</ion-button>
+				<ion-button [routerLink]="['/locations']" expand="block" size="large" class="mt-3 shadow-md">{{ location.name }}
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<div *ngIf="!isErrorLoad && selectCategoryId != 1" class="pt-3 mt-2">
+		<ion-card class="request-card mt-3 mb-3" color="white" mode="ios" *ngFor='let performer of performers'
+				  tappable  (click)="openRequest('/user/profile/'+performer.user_id)">
+			<ion-item lines="full">
+				<ion-avatar slot="start">
+					<img [src]="performer.avatar_image">
+				</ion-avatar>
+				<ion-label color="medium" class="ion-text-wrap mt-2">
+					<small>{{ performer.category }}</small>
+					<h3>{{ performer.first_last_middle_name }}</h3>
+					<p>{{ performer.created_at }}</p>
+				</ion-label>
+			</ion-item>
+			<ion-card-content class="pt-0 pb-0">
+				<ion-row>
+					<ion-col size="10" class="ion-text-left">
+						Рейтинг<br>
+						<span>
+							<ion-icon *ngFor="let rating_star of performer?.rating?.rating_stars;" name="{{ rating_star }}"></ion-icon>
+						</span>
+						<strong class="pl-2">{{ performer?.rating?.rating }}</strong>
+						<span class="pr-2 pl-2">|</span>
+						<span>
+							<ion-icon name="people" class="pr-2"></ion-icon> <strong>{{ performer?.rating?.count_feedbacks }}</strong>
+						</span>
+					</ion-col>
+					<ion-col size="2" class="ion-text-right pt-1 pr-0" color="medium">
+						<strong *ngIf="performer.is_identification"><ion-icon name="checkmark-circle" color="primary" class="mt-2 icon-2x"></ion-icon></strong>
+					</ion-col>
+				</ion-row>
+			</ion-card-content>
+		</ion-card>
+		<ion-infinite-scroll threshold="200px" (ionInfinite)="infiniteLoadPerformers($event)" class="pt-3">
+			<ion-infinite-scroll-content loadingSpinner="crescent" loadingText="Загрузка исполнителей...">
+			</ion-infinite-scroll-content>
+		</ion-infinite-scroll>
+	</div>
+</ion-content>

@@ -1,0 +1,69 @@
+<ion-header>
+	<ion-toolbar color="success">
+		<ion-buttons slot="start">
+			<ion-menu-button></ion-menu-button>
+		</ion-buttons>
+		<ion-title>
+			<strong>Создать заявку</strong>
+		</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+	<div class="top-content-bg"></div>
+	<ion-card class="welcome-card" color="white" mode="ios">
+		<ion-card-header>
+			<ion-card-title>Чем Вам помочь?</ion-card-title>
+		</ion-card-header>
+		<ion-card-content>
+			<p><strong>1. Заполните заявку</strong><br>Мы быстро оповестим исполнителей о вашей заявке.</p>
+			<p><strong>2. Получите предложения</strong><br>Заинтересованные исполнители предложат вам
+				свои услуги.</p>
+			<p><strong>3. Выберите исполнителя</strong><br>Выберите подходящее для вас
+				предложение по цене или рейтингу исполнителя.</p>
+		</ion-card-content>
+	</ion-card>
+	<div *ngIf="isErrorLoad && !isLoad" class="mt-5">
+		<ion-row class="ion-justify-content-center mt-5">
+			<ion-col size="12" class="ion-text-center ion-padding-horizontal">
+				<ion-icon name="wifi" color="medium" class="icon-8x"></ion-icon>
+				<div>
+					<h4 class="mt-0 mb-0">Интернет недоступен</h4>
+				</div>
+				<div class="ion-text-center ion-padding-horizontal text-medium">
+					<p>Для работы приложения необходим доступ к сети</p>
+				</div>
+				<ion-button (click)="updateLoad()" expand="block" size="large" class="mt-3 shadow-md">Обновить
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</div>
+	<ion-list lines="full" class="mb-5 pb-0" *ngIf="isLoad && !isErrorLoad">
+		<ion-list-header>
+			<ion-label><ion-skeleton-text animated style="width: 150px"></ion-skeleton-text></ion-label>
+		</ion-list-header>
+		<ion-item *ngFor='let category of [1,2,3,4,5,6,7,8,9,10]'  detail>
+			<ion-avatar slot="start">
+				<ion-skeleton-text animated></ion-skeleton-text>
+			</ion-avatar>
+			<ion-label><ion-skeleton-text animated style="width: 170px"></ion-skeleton-text></ion-label>
+		</ion-item>
+	</ion-list>
+	<ion-list lines="full" class="mb-5 pb-0" *ngIf="!isLoad && !isErrorLoad">
+		<ion-list-header>
+			<ion-label>Выберите категорию заявки</ion-label>
+		</ion-list-header>
+		<ion-item *ngFor='let category of categories' [routerLink]="['/requests/add-subcategories/'+category.id]"
+			detail>
+			<ion-avatar slot="start">
+				<img [src]="category.icon">
+			</ion-avatar>
+			<ion-label class="ion-text-wrap">
+				<h3>
+					{{ category.name }}
+					<small *ngIf="category.description && category.description != ''" class="text-medium block">{{ category.description }}</small>
+				</h3>
+			</ion-label>
+		</ion-item>
+	</ion-list>
+</ion-content>
